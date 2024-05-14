@@ -1,0 +1,63 @@
+{
+    "benchmarks.CatalogSuite.time_repeated_write": {
+        "code": "class CatalogSuite:\n    def time_repeated_write(self):\n        for _ in range(100):\n            self.client.new(\n                structure_family=StructureFamily.table,\n                data_sources=[\n                    DataSource(\n                        structure_family=StructureFamily.table,\n                        structure=TableStructure.from_pandas(self.df),\n                        mimetype=\"text/csv\",\n                    ),  # or PARQUET_MIMETYPE\n                ],\n            )\n\n    def setup(self):\n        self.directory = tempfile.TemporaryDirectory()\n        self.df = pandas.DataFrame([])\n    \n        catalog = from_uri(\n            f\"sqlite+aiosqlite:///{self.directory.name}/catalog.db\",\n            init_if_not_exists=True,\n            writable_storage=self.directory.name,\n        )\n        self.context = Context.from_app(build_app(catalog))\n        self.client = from_context(self.context)",
+        "min_run_count": 2,
+        "name": "benchmarks.CatalogSuite.time_repeated_write",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "18a137c3cfef3d145b601c3996bd320828b4af1d3ef40e56ad9e64ee8906e467",
+        "warmup_time": -1
+    },
+    "benchmarks.TimeSuite.time_list_tree": {
+        "code": "class TimeSuite:\n    def time_list_tree(self):\n        list(self.client)\n\n    def setup(self):\n        tree = MapAdapter({\"x\": ArrayAdapter.from_array(numpy.ones((100, 100)))})\n        app = build_app(tree)\n        self.context = Context.from_app(app)\n        self.client = from_context(self.context)",
+        "min_run_count": 2,
+        "name": "benchmarks.TimeSuite.time_list_tree",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "eea549384270f906c7b76d633df32527eda352579dc4f055f070a784f7c658ac",
+        "warmup_time": -1
+    },
+    "benchmarks.TimeSuite.time_lookup": {
+        "code": "class TimeSuite:\n    def time_lookup(self):\n        self.client[\"x\"]\n\n    def setup(self):\n        tree = MapAdapter({\"x\": ArrayAdapter.from_array(numpy.ones((100, 100)))})\n        app = build_app(tree)\n        self.context = Context.from_app(app)\n        self.client = from_context(self.context)",
+        "min_run_count": 2,
+        "name": "benchmarks.TimeSuite.time_lookup",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "7fb7043182aedc64e9772039cc07e26962a02109a3d5e552dffc892a9c778aa0",
+        "warmup_time": -1
+    },
+    "benchmarks.TimeSuite.time_lookup_and_read": {
+        "code": "class TimeSuite:\n    def time_lookup_and_read(self):\n        self.client[\"x\"].read()\n\n    def setup(self):\n        tree = MapAdapter({\"x\": ArrayAdapter.from_array(numpy.ones((100, 100)))})\n        app = build_app(tree)\n        self.context = Context.from_app(app)\n        self.client = from_context(self.context)",
+        "min_run_count": 2,
+        "name": "benchmarks.TimeSuite.time_lookup_and_read",
+        "number": 0,
+        "param_names": [],
+        "params": [],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "type": "time",
+        "unit": "seconds",
+        "version": "ee4232fa1331d3841436753b9aa21f4ac58807b36b1c83b6270216f4eb29c1ae",
+        "warmup_time": -1
+    },
+    "version": 2
+}
